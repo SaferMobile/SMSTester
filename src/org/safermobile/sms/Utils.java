@@ -43,14 +43,14 @@ public class Utils {
 	/*
 	 * Load the log file text
 	 */
-	 public static String loadTextFile (String path)
+	 public static String loadTextFile (File file)
 	    {
 	    	String line = null;
 	    
 	    	StringBuffer out = new StringBuffer();
 	    	
 	    	try {
-		    	BufferedReader reader = new BufferedReader((new FileReader(new File(path))));
+		    	BufferedReader reader = new BufferedReader((new FileReader(file)));
 
 				while ((line = reader.readLine()) != null)
 				{
@@ -90,13 +90,12 @@ public class Utils {
 		/*
 		 * Load the log file text
 		 */
-		 public static boolean saveTextFile (String path, String contents, boolean append)
+		 public static boolean saveTextFile (File file, String contents, boolean append)
 		    {
 			 	
 		    	try {
 		    		
 		    		//make sure folders all exist
-		    		File file = new File(path);
 		    		if (!file.exists())
 		    			new File(file.getParent()).mkdirs();
 		    		

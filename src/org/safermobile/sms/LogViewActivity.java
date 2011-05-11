@@ -1,6 +1,7 @@
 package org.safermobile.sms;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,25 +24,27 @@ import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class LogViewActivity extends Activity {
+public class LogViewActivity extends Activity implements SMSTesterConstants
+{
 	
 	private SMSLogger _smsLogger;
 
-	private TextView _textView = null;
+	private TableLayout _table;
 	
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.log);
+        setContentView(R.layout.logtable);
         
-        _textView = (TextView)findViewById(R.id.messageLog);
-        
+        _table = (TableLayout)findViewById(R.id.logTable);
        
         String mode = "";
         
@@ -51,7 +54,9 @@ public class LogViewActivity extends Activity {
         	mode = extras.getString("mode");
         }
         
-		_smsLogger = new SMSLogger(mode);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    	String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+		_smsLogger = new SMSLogger(mode, logBasePath);
         
         
     }
@@ -61,9 +66,35 @@ public class LogViewActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		
-		String logFile = _smsLogger.getLogFilePath();
-    	_textView.setText(Utils.loadTextFile(logFile));
+		if (_smsLogger.getLogFile().exists())
+			displayLogData(Utils.loadTextFile(_smsLogger.getLogFile()));
+	}
 	
+	private void displayLogData (String logData)
+	{
+		StringTokenizer st = new StringTokenizer(logData,"\n");
+		
+		_table.removeAllViews();
+		
+		while (st.hasMoreTokens())
+		{
+			TableRow row = new TableRow(this);
+			StringTokenizer st2 = new StringTokenizer (st.nextToken(),",");
+			
+			while (st2.hasMoreTokens())
+			{
+				String value = st2.nextToken();
+				value = value.substring(1, value.length()-1);//remove quotes
+				
+				TextView tvColumn = new TextView(this);
+				tvColumn.setPadding(3, 3, 0, 0);
+				tvColumn.setText(value);					
+				//tvColumn.setLayoutParams(new LayoutParams(100,10)); 
+				row.addView(tvColumn);
+			}
+			
+			_table.addView(row);
+		}
 	}
 
 	
@@ -104,16 +135,16 @@ public class LogViewActivity extends Activity {
  		
  		if (item.getItemId() == 1)
  		{
- 			String logFile = _smsLogger.getLogFilePath();
- 	    	_textView.setText(Utils.loadTextFile(logFile));
+ 			displayLogData(Utils.loadTextFile(_smsLogger.getLogFile()));
+ 	    	
  		}
  		else if (item.getItemId() == 2)
  		{
 
  	    	_smsLogger.rotateLogFile();
  	    	
- 	   	String logFile = _smsLogger.getLogFilePath();
-	    	_textView.setText(Utils.loadTextFile(logFile));
+ 	    	displayLogData(Utils.loadTextFile(_smsLogger.getLogFile()));
+
  		}
          return true;
  	}

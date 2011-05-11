@@ -1,34 +1,27 @@
 package org.safermobile.sms;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Date;
 
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
-public class SMSLogger {
+public class SMSLogger implements SMSTesterConstants
+{
 
-	
-	private final String TAG = "JBSMS";
-
-	private String _logMode = null;
-	
-	private String basePath = "/sdcard/jbsms";
-	private String logFilePath = null;
+	private String _logMode = null;	
+	private String _basePath = null;
+	private File _logFile = null;
 	
 	public final static String MODE_SEND = "send";
 	public final static String MODE_RECV = "recv";
 	public final static String MODE_RECV_DATA = "recvdata";
 	
-	public SMSLogger (String logMode)
+	public SMSLogger (String logMode, String basePath)
 	{
 		_logMode = logMode;
+		_basePath = basePath;
 		
-		if (logFilePath == null)
+		if (_logFile == null)
 		{
 			init();
 		}
@@ -37,33 +30,40 @@ public class SMSLogger {
 	public void init ()
 	{
 		
-		File fileDir = new File(basePath);
+		File fileDir = new File(_basePath);
+		
 		if (!fileDir.exists())
 			fileDir.mkdir();
 		
 		//load existing log data
-		logFilePath = basePath + "/jbsmstest" + "-" + _logMode + ".csv";
-		
+		_logFile = new File(_basePath,"smstester" + "-" + _logMode + ".csv");
+	
 	}
 	
 	public void rotateLogFile () 
 	{
 		
-		String logData = Utils.loadTextFile(logFilePath);
+		String logData = Utils.loadTextFile(_logFile);
+	
+		File newLogFile = new File(_basePath, generateTimestampLogFileName());
 		
-		//copy it to new file
-		Date logDate = new Date();
-		String newLogFilePath = basePath + "/jbsmstest" + "-" + _logMode + "-" + logDate.getYear() + logDate.getMonth() + logDate.getDate() + "-" + logDate.getHours() + logDate.getMinutes() + logDate.getSeconds() + ".csv";
-		Utils.saveTextFile(newLogFilePath, newLogFilePath, false);
+		Utils.saveTextFile(newLogFile, logData, false);		
 		
-		Utils.saveTextFile(logFilePath, "", false);
+		Utils.saveTextFile(_logFile, "", false);
 		
 		
 	}
 	
-	public String getLogFilePath ()
+	private String generateTimestampLogFileName ()
 	{
-		return logFilePath;
+		//copy it to new file
+		Date logDate = new Date();
+		return "smstester" + "-" + _logMode + "-" + logDate.getYear() + logDate.getMonth() + logDate.getDate() + "-" + logDate.getHours() + logDate.getMinutes() + logDate.getSeconds() + ".csv";
+	}
+	
+	public File getLogFile ()
+	{
+		return _logFile;
 	}
 	
 
@@ -74,7 +74,7 @@ public class SMSLogger {
 		Log.i(TAG, log);
 		
 		
-		Utils.saveTextFile(logFilePath, log, true);
+		Utils.saveTextFile(_logFile, log, true);
 	
 	}
 	
@@ -85,7 +85,7 @@ public class SMSLogger {
 		String log = generateCSV(vals) + "\n";
 		Log.i(TAG, log);
 		
-		Utils.saveTextFile(logFilePath, log, true);
+		Utils.saveTextFile(_logFile, log, true);
 	
 	}
 	
@@ -98,7 +98,7 @@ public class SMSLogger {
 		Log.i(TAG, log);
 		
 
-		Utils.saveTextFile(logFilePath, log, true);
+		Utils.saveTextFile(_logFile, log, true);
 
 	
 	}
@@ -110,7 +110,7 @@ public class SMSLogger {
 		Log.i(TAG, log);
 		
 		
-		Utils.saveTextFile(logFilePath, log, true);
+		Utils.saveTextFile(_logFile, log, true);
 
 	}
 	
@@ -121,7 +121,7 @@ public class SMSLogger {
 		Log.i(TAG, log);
 		
 		
-		Utils.saveTextFile(logFilePath, log, true);
+		Utils.saveTextFile(_logFile, log, true);
 
 	}
 	

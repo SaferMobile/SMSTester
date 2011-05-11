@@ -1,2 +1,44 @@
 
-A project of SaferMobile Labs | https://lab.safermobile.org/wiki
+---
+SMS Tester for Android
+---
+A project of SaferMobile Labs
+info@safermobile.org | https://lab.safermobile.org/wiki
+=====================
+
+Introduction
+------------
+The SaferMobile projects plans on releasing simple, usable software tools that
+allow mobile phones to be used as monitors and sensors on their networks to
+help developers, organizations, and everyday users, monitor network performance,
+and proactively detect filtering and censorship.
+
+Our first trial run with SMSTester was completed in April 2011. The results are
+written up here: http://mobileactive.org/smstester-monitoring-sms-delivery-and-keyword-filtering-possibly
+
+Status
+------------
+We are currently updating the SMSTester app to fix known issues before more widely
+promoting the tool. We would welcome allies to comment and run SMSTester in a second
+controlled run of tests. Please send us an email if you are interested.
+
+
+Requirements
+------------
+This code was written to target Android 2.2, but should generally work on any modern
+version of Android, and any SMS-capable device (aka not Wifi-only tablets or players).
+
+Features
+------------
+The SMSTester app enables two Android devices to automatically send a configured list of
+messages to one another, and have the send and receive times of those messages, along with
+data like Cell Provider ID, Location Area Code, and other mobile network information, logged
+into easily parseable text files.
+
+The data from the 'send' side is included in the message itself, such that it the 'receive'
+side can parse, analyze and display the results without needing data from the 'send' side. 
+Each message is coded with a unique GUID as well, so that data sets from both sides can be
+later combined if necessary.
+
+
+

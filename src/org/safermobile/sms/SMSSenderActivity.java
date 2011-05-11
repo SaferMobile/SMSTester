@@ -262,7 +262,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
     	
     	_smsLogger.logStart(operator, cid+"", lac+"", new Date());
  		
-    	while (_doLoop)
+    	do
     	{
     	
 	    	Iterator<String> itMsgs = listMsgs.iterator();
@@ -291,6 +291,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 	    		
 	    	}
     	}
+    	while (_doLoop);
     	
     	Message msg = new Message();
 		Bundle data = new Bundle();		
@@ -446,7 +447,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
  		else if (item.getItemId() == 4)
  		{
  			String version = getVersionName( this, SMSSenderActivity.class);
- 			String aboutMsg = "SMSTester: " + version + "\ncontact: nathan@guardianproject.info";
+ 			String aboutMsg = "SMSTester: " + version + "\nLearn more at: http://safermobile.org";
  			
  			Toast.makeText(this, aboutMsg, Toast.LENGTH_LONG).show();
  		}

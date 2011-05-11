@@ -79,6 +79,7 @@ public class LogViewActivity extends Activity implements SMSTesterConstants
 		while (st.hasMoreTokens())
 		{
 			TableRow row = new TableRow(this);
+			row.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.FILL_PARENT)); 
 			StringTokenizer st2 = new StringTokenizer (st.nextToken(),",");
 			
 			while (st2.hasMoreTokens())

@@ -66,7 +66,7 @@ public class SMSLogger implements SMSTesterConstants
 		return _logFile;
 	}
 	
-
+	/*
 	public void logStart (String operator, String cid, String lac, Date ts)
 	{
 		String[] vals = {"start",operator, cid, lac,ts.getTime()+""};
@@ -76,7 +76,7 @@ public class SMSLogger implements SMSTesterConstants
 		
 		Utils.saveTextFile(_logFile, log, true);
 	
-	}
+	}*/
 	
 	
 	public void logSend (String from, String to, String smsMsg, Date ts, String operator, String cid, String lac)

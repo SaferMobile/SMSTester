@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.content.Context;
+import android.util.Log;
 
 public class Utils {
 
@@ -111,8 +112,9 @@ public class Utils {
 		    		return true;
 			    	
 				} catch (IOException e) {
-				//	Log.d(TAG, "error writing file: " + path, e);
-						e.printStackTrace();
+					
+					Log.d("Utils", "error writing file: " + file.toString(), e);
+				
 					return false;
 				}
 				

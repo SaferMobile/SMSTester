@@ -1,6 +1,7 @@
 package org.safermobile.sms;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +34,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SMSSenderActivity extends Activity implements Runnable {
+public class SMSSenderActivity extends Activity implements Runnable, SMSTesterConstants {
 
 	private SMSLogger _smsLogger;
 	private SmsManager sms = SmsManager.getDefault();
@@ -46,8 +47,9 @@ public class SMSSenderActivity extends Activity implements Runnable {
 	private String operator;
 	
 	public final static short SMS_DATA_PORT = 7027;
-	boolean _useDataPort = true;
-	int _timeDelay = 1000; //1 second
+	boolean _useDataPort = false;
+	boolean _addTrackingMetadata = true;
+	int _timeDelay = 5000; //1 second
 	boolean _doLoop = false;
 	boolean keepRunning = false;
 	
@@ -77,7 +79,9 @@ public class SMSSenderActivity extends Activity implements Runnable {
         
     	try
 		{	
-    		_smsLogger = new SMSLogger(SMSLogger.MODE_SEND);
+    		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        	String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+    		_smsLogger = new SMSLogger(SMSLogger.MODE_SEND, logBasePath);
 		}
 		catch (Exception e)
 		{
@@ -109,7 +113,8 @@ public class SMSSenderActivity extends Activity implements Runnable {
 
         _toPhoneNumber = prefs.getString("pref_default_recipient", "");
         _useDataPort = prefs.getBoolean("pref_use_data", false);
-        _timeDelay = Integer.parseInt(prefs.getString("pref_time_delay", "1000"));
+        _addTrackingMetadata = prefs.getBoolean("pref_use_tracking", true);
+        _timeDelay = Integer.parseInt(prefs.getString("pref_time_delay", "5000"));
         _doLoop = prefs.getBoolean("pref_loop", false);
     }
     
@@ -121,26 +126,48 @@ public class SMSSenderActivity extends Activity implements Runnable {
         }
     
     //---sends an SMS message to another device---
-    private void sendSMS(String phoneNumber, String message, boolean useDataPort)
+    private void sendSMS(String phoneNumber, String testMessage, boolean useDataPort, boolean addTrackingMetadata)
     {        
     
+    	
     	 PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
     	            new Intent(SENT), 0);
     	        
+    	 PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
+    	            new Intent(DELIVERED), 0);
+    	 
     	 getLocationInfo();
- 		_smsLogger.logStart(operator, cid+"", lac+"", new Date());
+ 		
+ 		StringBuffer message = new StringBuffer();
+ 		message.append(testMessage);
+ 		
+ 		if (addTrackingMetadata)
+ 		{
+	 		message.append(' ');
+	 		message.append("id:");
+	 		message.append(java.util.UUID.randomUUID().toString());
+	 		message.append(' ');
+	 		message.append("ts:");
+	 		message.append(new Date().getTime());
+	 		message.append(' ');
+	 		message.append("cid:");
+	 		message.append(cid);
+	 		message.append(' ');
+	 		message.append("lac:");
+	 		message.append(lac);
+ 		}
  		
     	 //---when the SMS has been sent---
-         SMSSentStatusReceiver statusRev = new SMSSentStatusReceiver(_fromPhoneNumber, phoneNumber, message, operator, cid+"", lac+"",_smsLogger);
+         SMSSentStatusReceiver statusRev = new SMSSentStatusReceiver(_fromPhoneNumber, phoneNumber, message.toString(), operator, cid+"", lac+"",_smsLogger);
          registerReceiver(statusRev, new IntentFilter(SENT));
         
         if (!useDataPort)
         {
-        	sms.sendTextMessage(phoneNumber, null, message, sentPI, null);      
+        	sms.sendTextMessage(phoneNumber, null, message.toString(), sentPI, deliveredPI);      
         }
         else
         {
-        	sms.sendDataMessage(phoneNumber, null, SMS_DATA_PORT, message.getBytes(), sentPI, null);
+        	sms.sendDataMessage(phoneNumber, null, SMS_DATA_PORT, message.toString().getBytes(), sentPI, deliveredPI);
         }
         
        
@@ -233,6 +260,8 @@ public class SMSSenderActivity extends Activity implements Runnable {
     {
     	keepRunning = true;
     	
+    	_smsLogger.logStart(operator, cid+"", lac+"", new Date());
+ 		
     	while (_doLoop)
     	{
     	
@@ -242,7 +271,8 @@ public class SMSSenderActivity extends Activity implements Runnable {
 	    	while (keepRunning && itMsgs.hasNext())
 	    	{
 	    		String nextMsg = itMsgs.next();
-	    		sendSMS(_toPhoneNumber,nextMsg, _useDataPort);
+	    		
+	    		sendSMS(_toPhoneNumber,nextMsg, _useDataPort, _addTrackingMetadata);
 	    		
 	    		Message msg = new Message();
 	    		Bundle data = new Bundle();
@@ -305,15 +335,27 @@ public class SMSSenderActivity extends Activity implements Runnable {
     {
     	ArrayList<String> listMsg = new ArrayList<String>();
     	
-    	String kwlist = Utils.loadTextFile(EditKeywordActivity.KEYWORD_FILE);
-    	StringTokenizer st = new StringTokenizer(kwlist,"\n");
-    	while (st.hasMoreTokens())
-    		listMsg.add(st.nextToken());
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    	String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+        
+        File _keywordFile = new File (logBasePath, KEYWORD_FILE);
     	
+        if (_keywordFile.exists())
+        {
+	    	String kwlist = Utils.loadTextFile(_keywordFile);
+	    	StringTokenizer st = new StringTokenizer(kwlist,"\n");
+	    	while (st.hasMoreTokens())
+	    		listMsg.add(st.nextToken());
+	    	
+	    
+        }
+        
     	return listMsg;
     }
+    
+    /*
     //---sends an SMS message to another device---
-    private void sendSMSMonitor(String phoneNumber, String message)
+    private void sendSMSMessage(String phoneNumber, String message)
     {        
     	
         PendingIntent sentPI = null;
@@ -354,6 +396,7 @@ public class SMSSenderActivity extends Activity implements Runnable {
         _smsLogger.logSend(_fromPhoneNumber, phoneNumber, message, new Date(), operator, cid+"", lac+"" );
 
     }    
+    */
     
     /*
      * Create the UI Options Menu (non-Javadoc)

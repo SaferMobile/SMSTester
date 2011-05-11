@@ -5,14 +5,16 @@ import java.util.Date;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.CellLocation;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.widget.Toast;
 
-public class SMSDataReceiver extends BroadcastReceiver {
+public class SMSDataReceiver extends BroadcastReceiver implements SMSTesterConstants {
 
 
 	SMSLogger _smsLogger;
@@ -24,6 +26,20 @@ public class SMSDataReceiver extends BroadcastReceiver {
 	private int lac;
 	private String operator;
 	
+	private void init (Context context)
+	{
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+    	String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+    	
+    	try
+		{	
+			_smsLogger = new SMSLogger("recvdata", logBasePath);
+		}
+		catch (Exception e)
+		{
+			Toast.makeText(context, "Error setting up SMS Log: " + e.getMessage(), Toast.LENGTH_LONG).show();
+		}
+	}
 	
     @Override
     public void onReceive(Context context, Intent intent) 
@@ -32,17 +48,7 @@ public class SMSDataReceiver extends BroadcastReceiver {
 			_telMgr = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
     	if (_smsLogger == null)
-    	{
-	    	try
-			{	
-				_smsLogger = new SMSLogger("recvdata");
-			}
-			catch (Exception e)
-			{
-				Toast.makeText(context, "Error setting up SMS Log: " + e.getMessage(), Toast.LENGTH_LONG).show();
-			}
-			
-    	}
+    		init(context);
     	
         //---get the SMS message passed in---
         Bundle bundle = intent.getExtras();        
@@ -67,6 +73,8 @@ public class SMSDataReceiver extends BroadcastReceiver {
 		        	msg = new String(msgs[i].getUserData());
 		        	
 		        Date rec = new Date(msgs[i].getTimestampMillis());
+		        
+		        getLocationInfo();
 		        
 		        _smsLogger.logReceive("recv-data",from, to, msg, rec, operator, cid+"", lac+"");
 		        

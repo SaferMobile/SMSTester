@@ -5,14 +5,16 @@ import java.util.Date;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.CellLocation;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.widget.Toast;
 
-public class SMSReceiver extends BroadcastReceiver {
+public class SMSReceiver extends BroadcastReceiver implements SMSTesterConstants {
 
 
 	SMSLogger _smsLogger;
@@ -33,7 +35,9 @@ public class SMSReceiver extends BroadcastReceiver {
     	{
 	    	try
 			{	
-				_smsLogger = new SMSLogger("recv");
+	    		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+	        	String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+				_smsLogger = new SMSLogger("recv", logBasePath);
 			}
 			catch (Exception e)
 			{

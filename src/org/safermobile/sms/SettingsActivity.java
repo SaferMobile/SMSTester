@@ -31,15 +31,7 @@ public class SettingsActivity
 	protected void onResume() {
 	
 		super.onResume();
-	/*
-		EditTextPreference pref = (EditTextPreference)((PreferenceCategory)getPreferenceScreen().getPreference(0)).getPreference(0);
-		String value = pref.getText();
-		
-		if (value != null && value.length() > 0)
-			pref.setSummary(value);
-		
-		*/
-		
+	
 		
 	};
 	
@@ -52,7 +44,6 @@ public class SettingsActivity
 	protected void onStop() {
 		super.onStop();
 		
-		//Log.d(getClass().getName(),"Exiting Preferences");
 	}
 
 	@Override
@@ -64,19 +55,5 @@ public class SettingsActivity
 		return true;
 	}
 
-	/*
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	Intent intent = new Intent(getBaseContext(), MainActivity.class);
-			
-			intent.putExtra("showSettings",false);
-			startActivityForResult(intent, 1);
-
-	        return true;
-	    }
-	    return super.onKeyDown(keyCode, event);
-	}*/
-	
 
 }

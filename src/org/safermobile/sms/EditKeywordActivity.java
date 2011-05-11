@@ -1,11 +1,15 @@
 package org.safermobile.sms;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,38 +17,38 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class EditKeywordActivity extends Activity {
+public class EditKeywordActivity extends Activity implements SMSTesterConstants
+{
 
-	private EditText txtEditor;
-	
-	public final static String BASE_PATH = "/sdcard/jbsms";
-
-	public final static String KEYWORD_FILE = BASE_PATH + "/keywords.txt";
+	private EditText _txtEditor;
+	private File _keywordFile;
 	
 	 @Override
 	    public void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.editor);
 	        
-	        txtEditor = (EditText)findViewById(R.id.editor);
-	
-	        String data = Utils.loadTextFile(KEYWORD_FILE);
+	        _txtEditor = (EditText)findViewById(R.id.editor);
+	        
+	    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        	String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+	        
+	        _keywordFile = new File (logBasePath, KEYWORD_FILE);
+	        
+	        String data = Utils.loadTextFile(_keywordFile);
 	        
 	        if (data == null || data.length() == 0)
 	        {
 	        	try {
-					data = Utils.loadAssetText(this, "keywords.txt");
+					data = Utils.loadAssetText(this, KEYWORD_FILE);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.e(TAG, "error loading keyword file",e);
 				}
 	        }
 	        
-	        txtEditor.setText(data);
+	        _txtEditor.setText(data);
 	        
-	        
-	        
-	        txtEditor.addTextChangedListener(new TextWatcher() { 
+	        _txtEditor.addTextChangedListener(new TextWatcher() { 
 	        	
                 public void  afterTextChanged (Editable s){ 
                 
@@ -61,7 +65,7 @@ public class EditKeywordActivity extends Activity {
 
 	        });
 	        
-	        txtEditor.setOnFocusChangeListener(new View.OnFocusChangeListener()
+	        _txtEditor.setOnFocusChangeListener(new View.OnFocusChangeListener()
 	        { 
 	          
 	           public void onFocusChange(View v, boolean gotFocus)
@@ -69,8 +73,8 @@ public class EditKeywordActivity extends Activity {
 	               if (!gotFocus)
 	               { 
 	            	   
-	            	   String data = txtEditor.getText().toString();
-	            	   Utils.saveTextFile(KEYWORD_FILE, data, false);
+	            	   String data = _txtEditor.getText().toString();
+	            	   Utils.saveTextFile(_keywordFile, data, false);
 	            	   	            	   
 	               }
 	           }
@@ -81,38 +85,5 @@ public class EditKeywordActivity extends Activity {
 	        
 	    }
 	
-	/*
-     public boolean onCreateOptionsMenu(Menu menu) {
-         super.onCreateOptionsMenu(menu);
-         
-         MenuItem mItem = null;
-         
-         mItem = menu.add(0, 1, Menu.NONE, "Add");
-         mItem = menu.add(0, 2, Menu.NONE, "Delete");
-         mItem = menu.add(0, 3, Menu.NONE, "Import");
-         
-        
-         return true;
-     }
-     
- 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
- 		
- 		super.onMenuItemSelected(featureId, item);
- 		
- 		if (item.getItemId() == 1)
- 		{
- 		
- 		}
- 		else if (item.getItemId() == 2)
- 		{
- 		
- 		}
- 		else if (item.getItemId() == 3)
- 		{
- 		
- 		}
-         return true;
- 	}
- 	*/
      
 }

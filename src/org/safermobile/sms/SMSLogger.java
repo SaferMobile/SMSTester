@@ -67,9 +67,9 @@ public class SMSLogger implements SMSTesterConstants
 	}
 	
 
-	public void logStart (String operator, String cid, String lac, Date sent)
+	public void logStart (String operator, String cid, String lac, Date ts)
 	{
-		String[] vals = {"start",operator, cid, lac,sent.toGMTString()};
+		String[] vals = {"start",operator, cid, lac,ts.getTime()+""};
 		String log = generateCSV(vals) + "\n";
 		Log.i(TAG, log);
 		
@@ -79,9 +79,9 @@ public class SMSLogger implements SMSTesterConstants
 	}
 	
 	
-	public void logSend (String from, String to, String smsMsg, Date sent, String operator, String cid, String lac)
+	public void logSend (String from, String to, String smsMsg, Date ts, String operator, String cid, String lac)
 	{
-		String[] vals = {"sent",from,to,smsMsg,sent.toGMTString(),operator,cid,lac};
+		String[] vals = {"sent",from,to,smsMsg,ts.getTime()+"",operator,cid,lac};
 		String log = generateCSV(vals) + "\n";
 		Log.i(TAG, log);
 		
@@ -89,9 +89,9 @@ public class SMSLogger implements SMSTesterConstants
 	
 	}
 	
-	public void logReceive (String mode, String from, String to, String smsMsg, Date rec, String operator, String cid, String lac)
+	public void logReceive (String mode, String from, String to, String smsMsg, Date ts, String operator, String cid, String lac)
 	{
-		String[] vals = {mode,from,to,smsMsg,rec.toGMTString(),operator,cid,lac};
+		String[] vals = {mode,from,to,smsMsg,ts.getTime()+"",operator,cid,lac};
 		
 		String log = generateCSV(vals) + "\n";
 		
@@ -105,7 +105,7 @@ public class SMSLogger implements SMSTesterConstants
 	
 	public void logError (String from, String to, String error, Date ts, String operator, String cid, String lac)
 	{
-		String[] vals = {"err",from,to,error,ts.toGMTString(),operator,cid,lac};
+		String[] vals = {"err",from,to,error,ts.getTime()+"",operator,cid,lac};
 		String log = generateCSV(vals) + "\n";
 		Log.i(TAG, log);
 		
@@ -116,7 +116,7 @@ public class SMSLogger implements SMSTesterConstants
 	
 	public void logDelivery (String from, String to, String deliveryStatus, Date ts)
 	{
-		String[] vals = {"del",from,to,deliveryStatus,ts.toGMTString()};
+		String[] vals = {"del",from,to,deliveryStatus,ts.getTime()+""};
 		String log = generateCSV(vals) + "\n";
 		Log.i(TAG, log);
 		

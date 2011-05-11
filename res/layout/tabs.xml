@@ -8,16 +8,15 @@
 		android:layout_width="fill_parent"
 		android:layout_height="30dp"
 		android:layout_gravity="center_horizontal"
-		android:background="#A0909090">
+		android:background="#00aa00">
 		<TextView android:id="@+id/radioModeText"
  		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"           
             android:text="SMSTester - send/recv SMS testing tool"
-			android:layout_marginTop="9px"
-			android:layout_marginRight="0px"
+			android:layout_margin="3px"			
 			android:gravity="right"
 			android:layout_toLeftOf="@+id/radioModeImage"
-            android:textColor="#999999" />
+            android:textColor="#ffffff" />
 	</RelativeLayout>
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/tabhost"

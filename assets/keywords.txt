@@ -1,5 +1,9 @@
 this is a default list
 feel free to edit, update or remove
+it will automatically save to your
+sdcard as keywords.txt when you edit
+this file
+
 protest
 activist
 human rights

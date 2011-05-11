@@ -28,6 +28,7 @@ import android.telephony.CellLocation;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -37,14 +38,12 @@ import android.widget.Toast;
 public class SMSSenderActivity extends Activity implements Runnable, SMSTesterConstants {
 
 	private SMSLogger _smsLogger;
+	private SMSErrorStatusReceiver _statusRev;
 	private SmsManager sms = SmsManager.getDefault();
 	private TelephonyManager _telMgr;
 
 	private String _fromPhoneNumber;
 	private String _toPhoneNumber;
-	private int cid;
-	private int lac;
-	private String operator;
 	
 	public final static short SMS_DATA_PORT = 7027;
 	boolean _useDataPort = false;
@@ -63,6 +62,9 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 	private final static String SENT = "SMS_SENT";
 	private final static String DELIVERED = "SMS_DELIVERED";
 
+	 PendingIntent _sentPI;
+	 PendingIntent _deliveredPI; 
+	 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,7 +92,12 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		
 		_telMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
-	
+	   	 _sentPI = PendingIntent.getBroadcast(this, 0,
+	   	            new Intent(SENT), 0);
+	   	        
+	   	 _deliveredPI = PendingIntent.getBroadcast(this, 0,
+	   	            new Intent(DELIVERED), 0);
+   
         
     }
     
@@ -129,23 +136,31 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
     private void sendSMS(String phoneNumber, String testMessage, boolean useDataPort, boolean addTrackingMetadata)
     {        
     
+    	String operator;
+    	int cid = -1, lac = -1;
     	
-    	 PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-    	            new Intent(SENT), 0);
-    	        
-    	 PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-    	            new Intent(DELIVERED), 0);
-    	 
-    	 getLocationInfo();
- 		
+		CellLocation location = (CellLocation) _telMgr.getCellLocation();
+		
+		if (location instanceof GsmCellLocation)
+		{
+			cid = ((GsmCellLocation)location).getCid();
+			lac = ((GsmCellLocation)location).getLac();
+			
+		}
+		
+		operator = _telMgr.getNetworkOperator();
+        
  		StringBuffer message = new StringBuffer();
  		message.append(testMessage);
  		
  		if (addTrackingMetadata)
  		{
+ 			String shortUUID = java.util.UUID.randomUUID().toString();
+ 			shortUUID = shortUUID.substring(0,8);
+ 			
 	 		message.append(' ');
 	 		message.append("id:");
-	 		message.append(java.util.UUID.randomUUID().toString());
+	 		message.append(shortUUID);
 	 		message.append(' ');
 	 		message.append("ts:");
 	 		message.append(new Date().getTime());
@@ -155,20 +170,23 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 	 		message.append(' ');
 	 		message.append("lac:");
 	 		message.append(lac);
+	 		message.append(' ');
+	 		message.append("op:");
+	 		message.append(operator);
+	 		
  		}
  		
-    	 //---when the SMS has been sent---
-         SMSSentStatusReceiver statusRev = new SMSSentStatusReceiver(_fromPhoneNumber, phoneNumber, message.toString(), operator, cid+"", lac+"",_smsLogger);
-         registerReceiver(statusRev, new IntentFilter(SENT));
-        
+    	
         if (!useDataPort)
         {
-        	sms.sendTextMessage(phoneNumber, null, message.toString(), sentPI, deliveredPI);      
+        	sms.sendTextMessage(phoneNumber, null, message.toString(), _sentPI, _deliveredPI);      
         }
         else
         {
-        	sms.sendDataMessage(phoneNumber, null, SMS_DATA_PORT, message.toString().getBytes(), sentPI, deliveredPI);
+        	sms.sendDataMessage(phoneNumber, null, SMS_DATA_PORT, message.toString().getBytes(), _sentPI, _deliveredPI);
         }
+        
+        _smsLogger.logSend(_fromPhoneNumber, _toPhoneNumber, message.toString(), new Date(), operator, cid+"", lac+"");
         
        
     } 
@@ -183,14 +201,13 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
     {
     	_doLoop = false;
     	keepRunning = false;
-    	
+    	if (runThread.isAlive())
+    		runThread.interrupt();
     }
     
 	private void startSMSTest ()
     {
 		loadPrefs();
-		getLocationInfo();
-		_smsLogger.logStart(operator, cid+"", lac+"", new Date());
 		
     	AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
@@ -222,27 +239,18 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
     }
     
 	
-	private void getLocationInfo ()
-	{
-		
-		CellLocation location = (CellLocation) _telMgr.getCellLocation();
-		
-		if (location instanceof GsmCellLocation)
-		{
-			cid = ((GsmCellLocation)location).getCid();
-			lac = ((GsmCellLocation)location).getLac();
-			
-		}
-		
-		operator = _telMgr.getNetworkOperator();
-	
-	}
-	
     private void sendTestMessages (String toPhoneNumber, boolean useDataPort)
     {
 	
     	_toPhoneNumber = toPhoneNumber;
+
+    	if (_statusRev != null)
+    		unregisterReceiver(_statusRev);
     	
+      	 //---when the SMS has been sent---
+    	_statusRev = new SMSErrorStatusReceiver(_fromPhoneNumber, _toPhoneNumber, _smsLogger);
+         registerReceiver(_statusRev, new IntentFilter(SENT));
+           
     	statusDialog = ProgressDialog.show(this, "",
     			"Starting send...", true);
     	statusDialog.setCancelable(true);
@@ -260,7 +268,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
     {
     	keepRunning = true;
     	
-    	_smsLogger.logStart(operator, cid+"", lac+"", new Date());
+    	//_smsLogger.logStart(operator, cid+"", lac+"", new Date());
  		
     	do
     	{
@@ -285,8 +293,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 	    		try {
 					Thread.sleep(_timeDelay);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.i(TAG,"couldn't sleep!",e);
 				}
 	    		
 	    	}
@@ -369,7 +376,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
             new Intent(DELIVERED), 0);
  
         //---when the SMS has been sent---
-        SMSSentStatusReceiver statusRev = new SMSSentStatusReceiver(_fromPhoneNumber, phoneNumber, message, operator, cid+"", lac+"", _smsLogger);
+        SMSErrorStatusReceiver statusRev = new SMSErrorStatusReceiver(_fromPhoneNumber, phoneNumber, message, operator, cid+"", lac+"", _smsLogger);
         registerReceiver(statusRev, new IntentFilter(SENT));
  
         //---when the SMS has been delivered---

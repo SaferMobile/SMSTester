@@ -131,10 +131,8 @@ public class SMSLogger implements SMSTesterConstants
 		
 		for (int i = 0; i < params.length; i++)
 		{
-			csv.append('"');
 			csv.append(params[i]);
-			csv.append('"');
-
+			
 			if ((i+1)<params.length)
 				csv.append(',');
 			

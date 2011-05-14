@@ -158,19 +158,19 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
  			String shortUUID = java.util.UUID.randomUUID().toString();
  			shortUUID = shortUUID.substring(0,8);
  			
-	 		message.append(' ');
+	 		message.append(',');
 	 		message.append("id:");
 	 		message.append(shortUUID);
-	 		message.append(' ');
+	 		message.append(',');
 	 		message.append("ts:");
 	 		message.append(new Date().getTime());
-	 		message.append(' ');
+	 		message.append(',');
 	 		message.append("cid:");
 	 		message.append(cid);
-	 		message.append(' ');
+	 		message.append(',');
 	 		message.append("lac:");
 	 		message.append(lac);
-	 		message.append(' ');
+	 		message.append(',');
 	 		message.append("op:");
 	 		message.append(operator);
 	 		

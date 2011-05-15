@@ -52,6 +52,9 @@ public class SMSReceiver extends BroadcastReceiver implements SMSTesterConstants
         String str = "";            
         if (bundle != null)
         {
+
+	        getLocationInfo();
+	        
             //---retrieve the SMS message received---
             Object[] pdus = (Object[]) bundle.get("pdus");
             msgs = new SmsMessage[pdus.length];            
@@ -59,12 +62,13 @@ public class SMSReceiver extends BroadcastReceiver implements SMSTesterConstants
                 msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);                
                 
 		        String from = msgs[i].getOriginatingAddress();
-		        String to = msgs[i].getServiceCenterAddress();
+		        String to = _telMgr.getLine1Number();
 		        String msg = msgs[i].getMessageBody().toString();
 		        Date rec = new Date(msgs[i].getTimestampMillis());
 		       
-		        getLocationInfo();
-		        _smsLogger.logReceive("recv-text",from, to, msg, rec, operator, cid+"", lac+"");
+		        String opAndSMSC = operator + '/' +  msgs[i].getServiceCenterAddress();
+		        
+		        _smsLogger.logReceive("recv-text",from, to, msg, rec, opAndSMSC, cid+"", lac+"");
 		        
 		        Toast.makeText(context, "recvd text msg from " + from + ": \"" + msg + "\"" , Toast.LENGTH_SHORT).show();
         	}

@@ -40,5 +40,7 @@ side can parse, analyze and display the results without needing data from the 's
 Each message is coded with a unique GUID as well, so that data sets from both sides can be
 later combined if necessary.
 
+The output of the data is stored on the device SDCard in comma seperated value (CSV) format,
+which makes it easy to import and parse in any office spreadsheet application.
 
 

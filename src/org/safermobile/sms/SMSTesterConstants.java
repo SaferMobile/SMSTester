@@ -1,3 +1,14 @@
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// SMSTesterConstants: globals!
+//
+////////////////////////////////////////////////////////////////////
+
+
+
 package org.safermobile.sms;
 
 public interface SMSTesterConstants {
@@ -8,4 +19,12 @@ public interface SMSTesterConstants {
 	
 	public final static String EXTRAS_BASE_PATH = "basePath";
 	public final static String LOG_DEFAULT_PATH = "/sdcard/smstester";
+	
+
+	public final static short SMS_DATA_PORT = 7027;
+	
+
+	public final static String SENT = "SMS_SENT";
+	public final static String DELIVERED = "SMS_DELIVERED";
+
 }

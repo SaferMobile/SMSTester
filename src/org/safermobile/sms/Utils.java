@@ -1,5 +1,11 @@
-/* Copyright (c) 2009, Nathan Freitas, Orbot / The Guardian Project - http://openideals.com/guardian */
-/* See LICENSE for licensing information */
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// Utils: generally useful bits of code
+//
+////////////////////////////////////////////////////////////////////
 
 
 package org.safermobile.sms;

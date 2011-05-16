@@ -1,5 +1,14 @@
-package org.safermobile.sms;
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// SMSSenderActvity: the UI and workflow code for configurating and starting
+// the SMS sending process
+//
+////////////////////////////////////////////////////////////////////
 
+package org.safermobile.sms;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,31 +46,52 @@ import android.widget.Toast;
 
 public class SMSSenderActivity extends Activity implements Runnable, SMSTesterConstants {
 
+	/* handles logging of events to disk */
 	private SMSLogger _smsLogger;
+	
+	/* handles parsing and logging error codes */
 	private SMSErrorStatusReceiver _statusRev;
+	
+	/* the OS manager for sending/recv SMS messages */
 	private SmsManager sms = SmsManager.getDefault();
+	
+	/* for reading metadata related to phone and radio status */
 	private TelephonyManager _telMgr;
 
+	/* phone number of sending device */
 	private String _fromPhoneNumber;
+	
+	/* phone number(s) of receiving device(s), comma delimited */
 	private String _toPhoneNumber;
 	
-	public final static short SMS_DATA_PORT = 7027;
+	/* whether or not to send message on default port as 'text' or on custom port as 'data' */
 	boolean _useDataPort = false;
+	
+	/* whether or not to append tracking & analysis metadata to body of message */
 	boolean _addTrackingMetadata = true;
-	int _timeDelay = 5000; //1 second
+	
+	/* default delay between sending each test message */
+	int _timeDelay = 5000; //ms
+	
+	/* whether or not to continuously loop test */
 	boolean _doLoop = false;
+	
+	/* for managing thread and looping */
 	boolean keepRunning = false;
 	
+	/* for managing run process and loop */
 	Thread runThread;
-	
+
+	/* for displaying progress status */
 	ProgressDialog statusDialog;
 	
+	/* main window for display info */
 	private TextView _textView = null;
+	
+	/* list of messages to send */
 	private ArrayList<String> listMsgs;
 	
-	private final static String SENT = "SMS_SENT";
-	private final static String DELIVERED = "SMS_DELIVERED";
-
+	/* for handling callbacks on SMS events */
 	 PendingIntent _sentPI;
 	 PendingIntent _deliveredPI; 
 	 
@@ -114,6 +144,9 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
     	   loadPrefs();
     }
     
+	/*
+	 * Loading the preferences from the system prefs into our class variables
+	 */
     private void loadPrefs ()
     {
     	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
@@ -125,6 +158,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
         _doLoop = prefs.getBoolean("pref_loop", false);
     }
     
+    /* get the device phone number */
     private String getMyPhoneNumber(){
         TelephonyManager mTelephonyMgr;
         mTelephonyMgr = (TelephonyManager)

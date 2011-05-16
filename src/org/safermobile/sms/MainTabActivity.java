@@ -1,3 +1,12 @@
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// MainTabActivity: UI class for display various tabs of the app
+//
+////////////////////////////////////////////////////////////////////
+
 package org.safermobile.sms;
 
 import android.app.TabActivity;

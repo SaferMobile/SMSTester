@@ -1,3 +1,12 @@
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// EditKeyActivity: handles editing of list of keywords for sending
+// as SMS messages, and persisting this to keywords.txt file 
+////////////////////////////////////////////////////////////////////
+
 package org.safermobile.sms;
 
 import java.io.File;

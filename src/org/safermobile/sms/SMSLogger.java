@@ -1,3 +1,12 @@
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// SMSLogger: logs various data from SMSTester workflow to text files
+//
+////////////////////////////////////////////////////////////////////
+
 package org.safermobile.sms;
 
 import java.io.File;

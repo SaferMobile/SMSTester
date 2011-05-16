@@ -1,3 +1,14 @@
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// SMSReceiver: handles callbacks for SMS messages that are received
+// on default port 
+//
+////////////////////////////////////////////////////////////////////
+
+
 package org.safermobile.sms;
 
 import java.util.Date;

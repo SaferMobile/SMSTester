@@ -1,3 +1,14 @@
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// SMSErrorStatusReceiver: handles callbacks on error states that occur
+// from sending messages, and logs these
+//
+////////////////////////////////////////////////////////////////////
+
+
 package org.safermobile.sms;
 
 import java.util.Date;
@@ -6,10 +17,7 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.telephony.SmsMessage;
-import android.widget.Toast;
 
 public class SMSErrorStatusReceiver extends BroadcastReceiver {
 

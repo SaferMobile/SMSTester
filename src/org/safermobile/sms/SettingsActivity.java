@@ -1,16 +1,17 @@
-/* Copyright (c) 2009, Nathan Freitas, Orbot / The Guardian Project - http://openideals.com/guardian */
-/* See LICENSE for licensing information */
-
+////////////////////////////////////////////////////////////////////
+// SMSTester - https://lab.safermobile.org
+// Copyright (c) 2011, SaferMobile / MobileActive
+// See LICENSE for licensing information 
+//
+// SettingsActivity: loads and displays XML-based settings from preferences file
+//
+////////////////////////////////////////////////////////////////////
 package org.safermobile.sms;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.view.KeyEvent;
 
 
 public class SettingsActivity 

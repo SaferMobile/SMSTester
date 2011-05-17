@@ -17,6 +17,7 @@ import android.widget.TabHost;
 
 public class MainTabActivity extends TabActivity {
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs);

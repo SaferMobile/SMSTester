@@ -63,7 +63,6 @@ public class SMSDataReceiver extends BroadcastReceiver implements SMSTesterConst
         //---get the SMS message passed in---
         Bundle bundle = intent.getExtras();        
         SmsMessage[] msgs = null;
-        String str = "";            
         if (bundle != null)
         {
             //---retrieve the SMS message received---

@@ -75,7 +75,6 @@ public class LogViewActivity extends Activity implements SMSTesterConstants
 			while (st2.hasMoreTokens())
 			{
 				String value = st2.nextToken();
-				value = value.substring(1, value.length()-1);//remove quotes
 				
 				TextView tvColumn = new TextView(this);
 				tvColumn.setPadding(3, 3, 0, 0);

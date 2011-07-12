@@ -2,56 +2,35 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-<PreferenceCategory android:title="General Settings">
+	<PreferenceCategory android:title="General Settings">
 
+		<EditTextPreference android:key="pref_default_recipient"
+			android:defaultValue="" android:title="Default Recipient"
+			android:summary="default phone number to send msgs to"
+			android:dialogTitle="Default Recipient (+12225551212))" />
 
-<EditTextPreference android:key="pref_default_recipient"
-android:defaultValue=""
-android:title="Default Recipient"
-android:summary="default phone number to send msgs to"
-android:dialogTitle="Default Recipient (+12225551212))"
-/>
+		<EditTextPreference android:key="pref_log_base_path"
+			android:defaultValue="/sdcard/smstester" android:title="Log Storage Path"
+			android:summary="where to store the log files" android:dialogTitle="Log Storage Path)" />
 
-<EditTextPreference android:key="pref_log_base_path"
-android:defaultValue="/sdcard/smstester"
-android:title="Log Storage Path"
-android:summary="where to store the log files"
-android:dialogTitle="Log Storage Path)"
-/>
+		<EditTextPreference android:key="pref_time_delay"
+			android:defaultValue="1000" android:title="Time Delay (ms)"
+			android:summary="Delay between each message send (milliseconds)"
+			android:dialogTitle="Time Delay (ms)" />
 
+		<CheckBoxPreference android:defaultValue="false"
+			android:key="pref_use_data" android:title="Use Data Port"
+			android:summary="Send SMS as data messages not text" android:enabled="true" />
 
+		<CheckBoxPreference android:defaultValue="true"
+			android:key="pref_use_tracking" android:title="Add Tracking Metadata"
+			android:summary="Append tracking metadata to message for better analytics"
+			android:enabled="true" />
 
+		<CheckBoxPreference android:defaultValue="false"
+			android:key="pref_loop" android:title="Loop Test"
+			android:summary="Keep Running Test Until I Say Stop" android:enabled="true" />
 
-<EditTextPreference android:key="pref_time_delay"
-android:defaultValue="1000"
-android:title="Time Delay (ms)"
-android:summary="Delay between each message send (milliseconds)"
-android:dialogTitle="Time Delay (ms)"
-/>
-
-<CheckBoxPreference 
-android:defaultValue="false" 
-android:key="pref_use_data"
-android:title="Use Data Port"
-android:summary="Send SMS as data messages not text"
-android:enabled="true"/> 
-
-<CheckBoxPreference 
-android:defaultValue="true" 
-android:key="pref_use_tracking"
-android:title="Add Tracking Metadata"
-android:summary="Append tracking metadata to message for better analytics"
-android:enabled="true"/> 
-
-
-<CheckBoxPreference 
-android:defaultValue="false" 
-android:key="pref_loop"
-android:title="Loop Test"
-android:summary="Keep Running Test Until I Say Stop"
-android:enabled="true"/> 
-
-</PreferenceCategory>
-
+	</PreferenceCategory>
 
 </PreferenceScreen>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">SMSTester</string>
-	<string name="welcome">\n\nThis app allows you to send and receive SMS messages in an automated, repeatable manner with a high amoutn of metadata logging\n\nThe messages are send from the keywords list.\n\nUse the menu options to start or configure the sending process\n\nAll log data is stored as csv files in the sdcard under the \'smstester\' folder.\n\n</string>
+	<string name="welcome">\n\nThis app allows you to send and receive SMS messages in an automated, repeatable manner while logging as much metadata as possible.\n\nThe messages are sent from the keywords list.\n\nUse the menu options to start or configure the sending process\n\nAll log data is stored as csv files in the sdcard under the \'smstester\' folder.\n\n</string>
 </resources>

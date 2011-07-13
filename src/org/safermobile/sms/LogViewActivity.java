@@ -58,18 +58,18 @@ public class LogViewActivity extends Activity implements SMSTesterConstants {
 	}
 
 	private void displayLogData(String logData) {
-		StringTokenizer st = new StringTokenizer(logData, "\n");
+		StringTokenizer logPerLine = new StringTokenizer(logData, "\n");
 
 		_table.removeAllViews();
 
-		while (st.hasMoreTokens()) {
+		while (logPerLine.hasMoreTokens()) {
 			TableRow row = new TableRow(this);
 			row.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
 					LayoutParams.FILL_PARENT));
-			StringTokenizer st2 = new StringTokenizer(st.nextToken(), ",");
+			StringTokenizer linePerElement = new StringTokenizer(logPerLine.nextToken(), ",");
 
-			while (st2.hasMoreTokens()) {
-				String value = st2.nextToken();
+			while (linePerElement.hasMoreTokens()) {
+				String value = linePerElement.nextToken();
 
 				TextView tvColumn = new TextView(this);
 				tvColumn.setPadding(3, 3, 0, 0);

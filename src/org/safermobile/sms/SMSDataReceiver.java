@@ -58,26 +58,23 @@ public class SMSDataReceiver extends BroadcastReceiver implements SMSTesterConst
 
 		// ---get the SMS message passed in---
 		Bundle bundle = intent.getExtras();
-		SmsMessage[] msgs = null;
 		if (bundle != null) {
 			// ---retrieve the SMS message received---
 			Object[] pdus = (Object[]) bundle.get("pdus");
-			msgs = new SmsMessage[pdus.length];
-			for (int i = 0; i < msgs.length; i++) {
-				msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
-
-				String from = msgs[i].getOriginatingAddress();
-				String to = msgs[i].getServiceCenterAddress();
-
+			SmsMessage sms = null;
+			for (int i = 0; i < pdus.length; i++) {
+				sms = SmsMessage.createFromPdu((byte[]) pdus[i]);
 				String msg = "";
+				if (sms.getMessageBody() != null)
+					msg = sms.getMessageBody().toString();
+				else if (sms.getUserData() != null)
+					msg = new String(sms.getUserData());
+				// skip messages that don't have the SMSTester header
+				if (!msg.startsWith(Utils.defaultMessageTag)) continue;
 
-				if (msgs[i].getMessageBody() != null)
-					msg = msgs[i].getMessageBody().toString();
-				else if (msgs[i].getUserData() != null)
-					msg = new String(msgs[i].getUserData());
-
-				Date rec = new Date(msgs[i].getTimestampMillis());
-
+				String from = sms.getOriginatingAddress();
+				String to = sms.getServiceCenterAddress();
+				Date rec = new Date(sms.getTimestampMillis());
 				getLocationInfo();
 
 				_smsLogger.logReceive("recv-data", from, to, msg, rec, operator,

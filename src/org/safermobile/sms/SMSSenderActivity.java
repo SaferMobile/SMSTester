@@ -166,6 +166,11 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		return mTelephonyMgr.getLine1Number();
 	}
 
+	private void sendHeaderSMS(String phoneNumber, boolean useDataPort) {
+		String message = new String("id,timestamp,cellid,lac,operator");
+		sendSMS(phoneNumber, message, useDataPort, false);
+	}
+
 	// ---sends an SMS message to another device---
 	private void sendSMS(String phoneNumber, String testMessage, boolean useDataPort,
 			boolean addTrackingMetadata) {
@@ -184,26 +189,22 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		operator = _telMgr.getNetworkOperator();
 
 		StringBuffer message = new StringBuffer();
+		message.append(Utils.defaultMessageTag);
+		message.append(',');
 		message.append(testMessage);
 
 		if (addTrackingMetadata) {
 			String shortUUID = java.util.UUID.randomUUID().toString();
 			shortUUID = shortUUID.substring(0, 8);
-			// TODO convert to CSV or TSV
 			message.append(',');
-			message.append("id:");
 			message.append(shortUUID);
 			message.append(',');
-			message.append("ts:");
 			message.append(new Date().getTime());
 			message.append(',');
-			message.append("cid:");
 			message.append(cid);
 			message.append(',');
-			message.append("lac:");
 			message.append(lac);
 			message.append(',');
-			message.append("op:");
 			message.append(operator);
 
 		}
@@ -296,6 +297,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		keepRunning = true;
 
 		// _smsLogger.logStart(operator, cid+"", lac+"", new Date());
+		sendHeaderSMS(_toPhoneNumber, _useDataPort);
 
 		do {
 

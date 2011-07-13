@@ -63,16 +63,18 @@ public class SMSReceiver extends BroadcastReceiver implements SMSTesterConstants
 
 			// ---retrieve the SMS message received---
 			Object[] pdus = (Object[]) bundle.get("pdus");
-			msgs = new SmsMessage[pdus.length];
-			for (int i = 0; i < msgs.length; i++) {
-				msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
+			SmsMessage sms = null;
+			for (int i = 0; i < pdus.length; i++) {
+				sms = SmsMessage.createFromPdu((byte[]) pdus[i]);
+				String msg = sms.getMessageBody().toString();
+				// skip messages that don't have the SMSTester header
+				if (!msg.startsWith(Utils.defaultMessageTag)) continue;
 
-				String from = msgs[i].getOriginatingAddress();
+				String from = sms.getOriginatingAddress();
 				String to = _telMgr.getLine1Number();
-				String msg = msgs[i].getMessageBody().toString();
-				Date rec = new Date(msgs[i].getTimestampMillis());
+				Date rec = new Date(sms.getTimestampMillis());
 
-				String opAndSMSC = operator + '/' + msgs[i].getServiceCenterAddress();
+				String opAndSMSC = operator + '/' + sms.getServiceCenterAddress();
 
 				_smsLogger.logReceive("recv-text", from, to, msg, rec, opAndSMSC, cid
 						+ "", lac + "");

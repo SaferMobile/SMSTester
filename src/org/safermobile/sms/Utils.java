@@ -28,6 +28,7 @@ public class Utils {
 	public static String defaultRecipient = "";
 	public static String defaultLogFolder = "";
 	public static int defaultTimeDelay = 1000;
+	public static String defaultMessageTag = "5M5T";
 	
 	public static String readString(InputStream stream) {
 		String line = null;

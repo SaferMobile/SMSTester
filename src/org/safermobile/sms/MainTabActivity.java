@@ -29,17 +29,23 @@ public class MainTabActivity extends TabActivity {
 
 		// set up default settings
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		TelephonyManager tMgr = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+		Utils.defaultRecipient = tMgr.getLine1Number();
+		Utils.defaultLogFolder = Environment.getExternalStorageDirectory()
+				.getAbsolutePath()
+				+ "/" + Utils.TAG;
+
+		// edit.commit() is apparently expensive, hence the double nested if statement
 		String defaultRecipient = prefs.getString("pref_default_recipient", "");
-		String logBasePath = prefs.getString("pref_log_base_path", "");
-		if (defaultRecipient.equals("") || logBasePath.equals("")) {
-			TelephonyManager tMgr = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
-			Log.i("SMSTester", "my phone number is: " + tMgr.getLine1Number());
-			String sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
+		String logFolder = prefs.getString("pref_log_base_path", "");
+		if (defaultRecipient.equals("") || logFolder.equals("")) {
 			SharedPreferences.Editor edit = prefs.edit();
-			if (defaultRecipient.equals(""))
-				edit.putString("pref_default_recipient", tMgr.getLine1Number());
-			if (logBasePath.equals(""))
-				edit.putString("pref_log_base_path", sdcard + "/smstester");
+			if (defaultRecipient.equals("")) {
+				edit.putString("pref_default_recipient", Utils.defaultRecipient);
+				Log.i(Utils.TAG, "putstring default recipient " + Utils.defaultRecipient);
+			}
+			if (logFolder.equals(""))
+				edit.putString("pref_log_base_path", Utils.defaultLogFolder);
 			edit.commit();
 		}
 
@@ -85,5 +91,4 @@ public class MainTabActivity extends TabActivity {
 
 		tabHost.setCurrentTab(0);
 	}
-
 }

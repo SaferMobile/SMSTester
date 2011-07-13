@@ -37,7 +37,7 @@ public class SMSDataReceiver extends BroadcastReceiver implements SMSTesterConst
 	private void init(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context
 				.getApplicationContext());
-		String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+		String logBasePath = prefs.getString("pref_log_base_path", Utils.defaultLogFolder);
 
 		try {
 			_smsLogger = new SMSLogger("recvdata", logBasePath);

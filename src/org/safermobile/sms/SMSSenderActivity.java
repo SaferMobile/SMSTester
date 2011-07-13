@@ -113,7 +113,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		try {
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
-			String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+			String logBasePath = prefs.getString("pref_log_base_path", Utils.defaultLogFolder);
 			_smsLogger = new SMSLogger(SMSLogger.MODE_SEND, logBasePath);
 		} catch (Exception e) {
 			Toast.makeText(this, "Error setting up SMS Log: " + e.getMessage(),
@@ -354,7 +354,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
-		String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+		String logBasePath = prefs.getString("pref_log_base_path", Utils.defaultLogFolder);
 
 		File _keywordFile = new File(logBasePath, KEYWORD_FILE);
 

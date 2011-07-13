@@ -45,7 +45,7 @@ public class SMSReceiver extends BroadcastReceiver implements SMSTesterConstants
 				SharedPreferences prefs = PreferenceManager
 						.getDefaultSharedPreferences(context.getApplicationContext());
 				String logBasePath = prefs.getString("pref_log_base_path",
-						LOG_DEFAULT_PATH);
+						Utils.defaultLogFolder);
 				_smsLogger = new SMSLogger("recv", logBasePath);
 			} catch (Exception e) {
 				Toast.makeText(context, "Error setting up SMS Log: " + e.getMessage(),

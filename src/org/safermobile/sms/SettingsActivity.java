@@ -52,11 +52,23 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	private void setSummaries() {
 		String text;
+		text = mDefaultRecipientPreference.getText();
+		if (text == null || text.equals(Utils.defaultRecipient)) {
+			mDefaultRecipientPreference.setSummary(R.string.pref_default_recipient_summary);
+		} else {
+			mDefaultRecipientPreference.setSummary(text);
+		}
 		text = mLogBasePathPreference.getText();
-		if (text.equals(LOG_DEFAULT_PATH)) {
+		if (text == null || text.equals(Utils.defaultLogFolder)) {
 			mLogBasePathPreference.setSummary(R.string.pref_log_base_path_summary);
 		} else {
 			mLogBasePathPreference.setSummary(text);
+		}
+		text = mTimeDelayPreference.getText();
+		if (text == null || text.equals(Integer.toString(Utils.timeDelay))) {
+			mTimeDelayPreference.setSummary(R.string.pref_time_delay_summary);
+		} else {
+			mTimeDelayPreference.setSummary(text);
 		}
 	}
 }

@@ -36,7 +36,7 @@ public class EditKeywordActivity extends Activity implements SMSTesterConstants 
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
-		String logBasePath = prefs.getString("pref_log_base_path", LOG_DEFAULT_PATH);
+		String logBasePath = prefs.getString("pref_log_base_path", Utils.defaultLogFolder);
 
 		_keywordFile = new File(logBasePath, KEYWORD_FILE);
 

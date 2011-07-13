@@ -35,6 +35,7 @@ import android.telephony.CellLocation;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -240,6 +241,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 		// Set an EditText view to get user input
 		final EditText input = new EditText(this);
+		input.setInputType(InputType.TYPE_CLASS_PHONE);
 
 		if (_toPhoneNumber != null)
 			input.setText(_toPhoneNumber);

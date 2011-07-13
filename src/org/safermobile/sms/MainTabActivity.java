@@ -11,8 +11,13 @@ package org.safermobile.sms;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.TabHost;
 
 public class MainTabActivity extends TabActivity {
@@ -21,6 +26,22 @@ public class MainTabActivity extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs);
+
+		// set up default settings
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		String defaultRecipient = prefs.getString("pref_default_recipient", "");
+		String logBasePath = prefs.getString("pref_log_base_path", "");
+		if (defaultRecipient.equals("") || logBasePath.equals("")) {
+			TelephonyManager tMgr = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
+			Log.i("SMSTester", "my phone number is: " + tMgr.getLine1Number());
+			String sdcard = Environment.getExternalStorageDirectory().getAbsolutePath();
+			SharedPreferences.Editor edit = prefs.edit();
+			if (defaultRecipient.equals(""))
+				edit.putString("pref_default_recipient", tMgr.getLine1Number());
+			if (logBasePath.equals(""))
+				edit.putString("pref_log_base_path", sdcard + "/smstester");
+			edit.commit();
+		}
 
 		Resources res = getResources(); // Resource object to get Drawables
 		TabHost tabHost = getTabHost(); // The activity TabHost

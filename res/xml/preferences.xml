@@ -5,17 +5,17 @@
 	<PreferenceCategory android:title="General Settings">
 
 		<EditTextPreference android:key="pref_default_recipient"
-			android:defaultValue="" android:title="Default Recipient"
+			android:title="Default Recipient" android:inputType="phone"
 			android:summary="default phone number to send msgs to"
 			android:dialogTitle="Default Recipient (+12225551212))" />
 
 		<EditTextPreference android:key="pref_log_base_path"
-			android:defaultValue="/sdcard/smstester" android:title="Log Storage Path"
+			android:title="Log Storage Path" android:inputType="textNoSuggestions"
 			android:summary="where to store the log files" android:dialogTitle="Log Storage Path)" />
 
 		<EditTextPreference android:key="pref_time_delay"
 			android:defaultValue="1000" android:title="Time Delay (ms)"
-			android:summary="Delay between each message send (milliseconds)"
+			android:inputType="number" android:summary="Delay between each message send (milliseconds)"
 			android:dialogTitle="Time Delay (ms)" />
 
 		<CheckBoxPreference android:defaultValue="false"

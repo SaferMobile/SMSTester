@@ -65,7 +65,7 @@ public class SettingsActivity extends PreferenceActivity implements
 			mLogBasePathPreference.setSummary(text);
 		}
 		text = mTimeDelayPreference.getText();
-		if (text == null || text.equals(Integer.toString(Utils.timeDelay))) {
+		if (text == null || text.equals(Integer.toString(Utils.defaultTimeDelay))) {
 			mTimeDelayPreference.setSummary(R.string.pref_time_delay_summary);
 		} else {
 			mTimeDelayPreference.setSummary(text);

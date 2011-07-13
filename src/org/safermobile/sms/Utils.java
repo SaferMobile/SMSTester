@@ -27,7 +27,7 @@ public class Utils {
 	// default preferences set dynamically based on the phone setup
 	public static String defaultRecipient = "";
 	public static String defaultLogFolder = "";
-	public static int timeDelay = 1000;
+	public static int defaultTimeDelay = 1000;
 	
 	public static String readString(InputStream stream) {
 		String line = null;

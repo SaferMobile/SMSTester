@@ -98,10 +98,10 @@ public class LogViewActivity extends Activity implements SMSTesterConstants {
 
 		MenuItem mItem = null;
 
-		mItem = menu.add(0, 1, Menu.NONE, "Refresh");
+		mItem = menu.add(0, 1, Menu.NONE, R.string.refresh);
 		mItem.setIcon(android.R.drawable.ic_menu_agenda);
 
-		mItem = menu.add(0, 2, Menu.NONE, "Rotate Log");
+		mItem = menu.add(0, 2, Menu.NONE, R.string.rotate_log);
 		mItem.setIcon(android.R.drawable.ic_menu_rotate);
 		return true;
 	}

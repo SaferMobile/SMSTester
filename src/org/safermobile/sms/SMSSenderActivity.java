@@ -114,10 +114,11 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		try {
 			SharedPreferences prefs = PreferenceManager
 					.getDefaultSharedPreferences(getApplicationContext());
-			String logBasePath = prefs.getString("pref_log_base_path", Utils.defaultLogFolder);
+			String logBasePath = prefs.getString("pref_log_base_path",
+					Utils.defaultLogFolder);
 			_smsLogger = new SMSLogger(SMSLogger.MODE_SEND, logBasePath);
 		} catch (Exception e) {
-			Toast.makeText(this, "Error setting up SMS Log: " + e.getMessage(),
+			Toast.makeText(this, getString(R.string.error_sms_log) + " " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}
 
@@ -158,6 +159,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 	/* get the device phone number */
 	private String getMyPhoneNumber() {
+		// TODO change this to use _telMgr global
 		TelephonyManager mTelephonyMgr;
 		mTelephonyMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		return mTelephonyMgr.getLine1Number();
@@ -186,7 +188,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		if (addTrackingMetadata) {
 			String shortUUID = java.util.UUID.randomUUID().toString();
 			shortUUID = shortUUID.substring(0, 8);
-
+			// TODO convert to CSV or TSV
 			message.append(',');
 			message.append("id:");
 			message.append(shortUUID);
@@ -236,8 +238,8 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-		alert.setTitle("Start SMS");
-		alert.setMessage("Enter target phone number");
+		alert.setTitle(R.string.start_sms_prompt_title);
+		alert.setMessage(R.string.start_sms_prompt_message);
 
 		// Set an EditText view to get user input
 		final EditText input = new EditText(this);
@@ -248,14 +250,14 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 		alert.setView(input);
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				_toPhoneNumber = input.getText().toString();
 				sendTestMessages(_toPhoneNumber, _useDataPort);
 			}
 		});
 
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		alert.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				// Canceled.
 			}
@@ -276,7 +278,8 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 				_smsLogger);
 		registerReceiver(_statusRev, new IntentFilter(SENT));
 
-		statusDialog = ProgressDialog.show(this, "", "Starting send...", true);
+		statusDialog = ProgressDialog.show(this, getString(R.string.starting_send_title),
+				getString(R.string.starting_send_message), true);
 		statusDialog.setCancelable(true);
 		statusDialog.show();
 		listMsgs = loadTestMessageList();
@@ -356,7 +359,8 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
-		String logBasePath = prefs.getString("pref_log_base_path", Utils.defaultLogFolder);
+		String logBasePath = prefs
+				.getString("pref_log_base_path", Utils.defaultLogFolder);
 
 		File _keywordFile = new File(logBasePath, KEYWORD_FILE);
 
@@ -419,16 +423,16 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 		MenuItem mItem = null;
 
-		mItem = menu.add(0, 1, Menu.NONE, "Start");
+		mItem = menu.add(0, 1, Menu.NONE, R.string.start);
 		mItem.setIcon(android.R.drawable.ic_menu_send);
 
-		mItem = menu.add(0, 2, Menu.NONE, "Stop");
+		mItem = menu.add(0, 2, Menu.NONE, R.string.stop);
 		mItem.setIcon(android.R.drawable.ic_media_pause);
 
-		mItem = menu.add(0, 3, Menu.NONE, "Settings");
+		mItem = menu.add(0, 3, Menu.NONE, R.string.settings);
 		mItem.setIcon(android.R.drawable.ic_menu_preferences);
 
-		mItem = menu.add(0, 4, Menu.NONE, "About");
+		mItem = menu.add(0, 4, Menu.NONE, R.string.about);
 		mItem.setIcon(android.R.drawable.ic_menu_help);
 
 		return true;
@@ -454,8 +458,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 		} else if (item.getItemId() == 4) {
 			String version = getVersionName(this, SMSSenderActivity.class);
-			String aboutMsg = "SMSTester: " + version
-					+ "\nLearn more at: http://safermobile.org";
+			String aboutMsg = String.format(getString(R.string.about_message), version);
 
 			Toast.makeText(this, aboutMsg, Toast.LENGTH_LONG).show();
 		}

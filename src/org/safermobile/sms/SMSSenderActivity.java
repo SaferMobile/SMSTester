@@ -152,7 +152,7 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 		_useDataPort = prefs.getBoolean("pref_use_data", false);
 		_addTrackingMetadata = prefs.getBoolean("pref_use_tracking", true);
 		_timeDelay = Integer.parseInt(prefs.getString("pref_time_delay", "5000"));
-		_doLoop = prefs.getBoolean("pref_loop", false);
+		_doLoop = prefs.getBoolean("pref_run_continuously", false);
 	}
 
 	/* get the device phone number */

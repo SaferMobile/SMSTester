@@ -2,35 +2,29 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<PreferenceCategory android:title="General Settings">
+	<EditTextPreference android:key="pref_default_recipient"
+		android:title="@string/pref_default_recipient_title"
+		android:inputType="phone" android:summary="@string/pref_default_recipient_summary"
+		android:dialogTitle="@string/pref_default_recipient_dialogtitle" />
 
-		<EditTextPreference android:key="pref_default_recipient"
-			android:title="Default Recipient" android:inputType="phone"
-			android:summary="default phone number to send msgs to"
-			android:dialogTitle="Default Recipient (+12225551212))" />
+	<EditTextPreference android:key="pref_log_base_path"
+		android:title="@string/pref_log_base_path_title" android:inputType="textNoSuggestions"
+		android:summary="@string/pref_log_base_path_summary" />
 
-		<EditTextPreference android:key="pref_log_base_path"
-			android:title="Log Storage Path" android:inputType="textNoSuggestions"
-			android:summary="where to store the log files" android:dialogTitle="Log Storage Path)" />
+	<EditTextPreference android:key="pref_time_delay"
+		android:defaultValue="1000" android:title="@string/pref_time_delay_title"
+		android:inputType="number" android:summary="@string/pref_time_delay_summary" />
 
-		<EditTextPreference android:key="pref_time_delay"
-			android:defaultValue="1000" android:title="Time Delay (ms)"
-			android:inputType="number" android:summary="Delay between each message send (milliseconds)"
-			android:dialogTitle="Time Delay (ms)" />
+	<CheckBoxPreference android:defaultValue="false"
+		android:key="pref_use_data" android:title="@string/pref_use_data_title"
+		android:summary="@string/pref_use_data_summary" />
 
-		<CheckBoxPreference android:defaultValue="false"
-			android:key="pref_use_data" android:title="Use Data Port"
-			android:summary="Send SMS as data messages not text" android:enabled="true" />
+	<CheckBoxPreference android:defaultValue="true"
+		android:key="pref_use_tracking" android:title="@string/pref_use_tracking_title"
+		android:summary="@string/pref_use_tracking_summary" />
 
-		<CheckBoxPreference android:defaultValue="true"
-			android:key="pref_use_tracking" android:title="Add Tracking Metadata"
-			android:summary="Append tracking metadata to message for better analytics"
-			android:enabled="true" />
-
-		<CheckBoxPreference android:defaultValue="false"
-			android:key="pref_loop" android:title="Loop Test"
-			android:summary="Keep Running Test Until I Say Stop" android:enabled="true" />
-
-	</PreferenceCategory>
+	<CheckBoxPreference android:defaultValue="false"
+		android:key="pref_run_continuously" android:title="@string/pref_run_continuously_title"
+		android:summary="@string/pref_run_continuously_summary" />
 
 </PreferenceScreen>

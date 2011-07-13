@@ -2,4 +2,17 @@
 <resources>
 	<string name="app_name">SMSTester</string>
 	<string name="welcome">\n\nThis app allows you to send and receive SMS messages in an automated, repeatable manner while logging as much metadata as possible.\n\nThe messages are sent from the keywords list.\n\nUse the menu options to start or configure the sending process\n\nAll log data is stored as csv files in the sdcard under the \'smstester\' folder.\n\n</string>
+	<string name="pref_default_recipient_title">Default Recipient</string>
+	<string name="pref_default_recipient_dialogtitle">Default Recipient, for example: +12225551212</string><string name="pref_default_recipient_summary">Default phone number to send msgs to</string>
+	<string name="pref_log_base_path_title">Log Storage Folder</string>
+	<string name="pref_log_base_path_summary">Where to store the log files</string>
+	<string name="pref_time_delay_title">Time Delay (ms)</string>
+	<string name="pref_time_delay_summary">Delay between messages, in milliseconds (default: 1000 ms)</string>
+	<string name="pref_use_data_title">Use Data Port</string>
+	<string name="pref_use_data_summary">Send SMS as data messages not text</string>
+	<string name="pref_use_tracking_title">Add tracking metadata</string>
+	<string name="pref_use_tracking_summary">Append tracking metadata to message for better analytics</string>
+	<string name="pref_run_continuously_title">Run Continuously</string>
+	<string name="pref_run_continuously_summary">Keep running the test until I stop it</string>
+	
 </resources>

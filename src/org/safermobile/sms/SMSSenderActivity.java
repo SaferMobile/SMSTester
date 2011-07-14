@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -33,6 +34,7 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.telephony.CellLocation;
 import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.text.InputType;
@@ -80,6 +82,9 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 	/* for managing thread and looping */
 	boolean keepRunning = false;
+	
+	boolean waitingForReply = true;
+	boolean permissionGranted = false;
 
 	/* for managing run process and loop */
 	Thread runThread;
@@ -295,7 +300,42 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 	public void run() {
 		keepRunning = true;
+		waitingForReply = true;
 
+
+		sendSMS(_toPhoneNumber, REQUEST_START_MSG, _useDataPort, false);
+		BroadcastReceiver reply = new BroadcastReceiver() {
+			
+			@Override
+			public void onReceive(Context context, Intent intent) {
+			     Bundle bundle = intent.getExtras();
+			     if (bundle == null) return;
+
+			     Object pdus[] = (Object[]) bundle.get("pdus");
+			     for (int n = 0; n < pdus.length; n++) {
+			    	 SmsMessage message = SmsMessage.createFromPdu((byte[]) pdus[n]);
+			    	 String msg = message.getDisplayMessageBody();
+			    	 if (msg.startsWith(Utils.defaultMessageTag + "," + ALLOW_START_MSG)) {
+			    		 waitingForReply = false;
+			    		 permissionGranted = true;
+			    	 } else if (msg.startsWith(Utils.defaultMessageTag + "," + DENY_START_MSG)) {
+			    		 waitingForReply = false;
+			    		 permissionGranted = false;
+			    	 }
+			     }
+			}
+		};
+		registerReceiver(reply, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+		while (waitingForReply) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				Log.i(TAG, "couldn't sleep!", e);
+			}
+		}
+		unregisterReceiver(reply);
+		if (!permissionGranted) return;
+		
 		// _smsLogger.logStart(operator, cid+"", lac+"", new Date());
 		sendHeaderSMS(_toPhoneNumber, _useDataPort);
 

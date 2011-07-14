@@ -19,6 +19,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.CellLocation;
+import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
@@ -68,12 +69,21 @@ public class SMSReceiver extends BroadcastReceiver implements SMSTesterConstants
 				sms = SmsMessage.createFromPdu((byte[]) pdus[i]);
 				String msg = sms.getMessageBody().toString();
 				// skip messages that don't have the SMSTester header
-				if (!msg.startsWith(Utils.defaultMessageTag)) continue;
+				if (!msg.startsWith(Utils.defaultMessageTag))
+					continue;
 
 				String from = sms.getOriginatingAddress();
 				String to = _telMgr.getLine1Number();
-				Date rec = new Date(sms.getTimestampMillis());
+				// send a confirmation if we receive a request
+				if (msg.startsWith(Utils.defaultMessageTag + "," + REQUEST_START_MSG)) {
+					SmsManager smsManager = SmsManager.getDefault();
+					// TODO sentIntent and deliveryIntent to handle errors
+					smsManager.sendTextMessage(from, null, Utils.defaultMessageTag + ","
+							+ ALLOW_START_MSG, null, null);
+				}
 
+				Date rec = new Date(sms.getTimestampMillis());
+				// TODO split out operator from SMSC
 				String opAndSMSC = operator + '/' + sms.getServiceCenterAddress();
 
 				_smsLogger.logReceive("recv-text", from, to, msg, rec, opAndSMSC, cid
@@ -95,7 +105,7 @@ public class SMSReceiver extends BroadcastReceiver implements SMSTesterConstants
 			lac = ((GsmCellLocation) location).getLac();
 
 		}
-		
+
 		operator = _telMgr.getNetworkOperator();
 
 	}

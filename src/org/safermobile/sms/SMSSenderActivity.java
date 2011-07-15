@@ -82,7 +82,8 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 
 	/* for managing thread and looping */
 	boolean keepRunning = false;
-	
+
+	/* for keeping track of the request to send and the response */
 	boolean waitingForReply = true;
 	boolean permissionGranted = false;
 
@@ -123,7 +124,8 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 					Utils.defaultLogFolder);
 			_smsLogger = new SMSLogger(SMSLogger.MODE_SEND, logBasePath);
 		} catch (Exception e) {
-			Toast.makeText(this, getString(R.string.error_sms_log) + " " + e.getMessage(),
+			Toast.makeText(this,
+					getString(R.string.error_sms_log) + " " + e.getMessage(),
 					Toast.LENGTH_LONG).show();
 		}
 
@@ -285,8 +287,8 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 				_smsLogger);
 		registerReceiver(_statusRev, new IntentFilter(SENT));
 
-		statusDialog = ProgressDialog.show(this, getString(R.string.starting_send_title),
-				getString(R.string.starting_send_message), true);
+		statusDialog = ProgressDialog.show(this, getString(R.string.sending_title),
+				getString(R.string.request_send_message), true);
 		statusDialog.setCancelable(true);
 		statusDialog.show();
 		listMsgs = loadTestMessageList();
@@ -299,33 +301,40 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 	}
 
 	public void run() {
-		keepRunning = true;
-		waitingForReply = true;
-
+		Message msg;
+		Bundle data;
+		int count = 0;
 
 		sendSMS(_toPhoneNumber, REQUEST_START_MSG, _useDataPort, false);
+		count++;
+
+		keepRunning = true;
+		waitingForReply = true;
 		BroadcastReceiver reply = new BroadcastReceiver() {
-			
+
 			@Override
 			public void onReceive(Context context, Intent intent) {
-			     Bundle bundle = intent.getExtras();
-			     if (bundle == null) return;
+				Bundle bundle = intent.getExtras();
+				if (bundle == null)
+					return;
 
-			     Object pdus[] = (Object[]) bundle.get("pdus");
-			     for (int n = 0; n < pdus.length; n++) {
-			    	 SmsMessage message = SmsMessage.createFromPdu((byte[]) pdus[n]);
-			    	 String msg = message.getDisplayMessageBody();
-			    	 if (msg.startsWith(Utils.defaultMessageTag + "," + ALLOW_START_MSG)) {
-			    		 waitingForReply = false;
-			    		 permissionGranted = true;
-			    	 } else if (msg.startsWith(Utils.defaultMessageTag + "," + DENY_START_MSG)) {
-			    		 waitingForReply = false;
-			    		 permissionGranted = false;
-			    	 }
-			     }
+				Object pdus[] = (Object[]) bundle.get("pdus");
+				for (int n = 0; n < pdus.length; n++) {
+					SmsMessage message = SmsMessage.createFromPdu((byte[]) pdus[n]);
+					String msg = message.getDisplayMessageBody();
+					if (msg.startsWith(Utils.defaultMessageTag + "," + ALLOW_START_MSG)) {
+						waitingForReply = false;
+						permissionGranted = true;
+					} else if (msg.startsWith(Utils.defaultMessageTag + ","
+							+ DENY_START_MSG)) {
+						waitingForReply = false;
+						permissionGranted = false;
+					}
+				}
 			}
 		};
-		registerReceiver(reply, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+		registerReceiver(reply, new IntentFilter(
+				"android.provider.Telephony.SMS_RECEIVED"));
 		while (waitingForReply) {
 			try {
 				Thread.sleep(1000);
@@ -334,25 +343,45 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 			}
 		}
 		unregisterReceiver(reply);
-		if (!permissionGranted) return;
-		
+		msg = new Message();
+		data = new Bundle();
+		data.putInt("count", count);
+		if (permissionGranted) {
+			data.putString("status", getString(R.string.allow_deny_message));
+			msg.setData(data);
+			handler.sendMessage(msg);
+		} else {
+			data.putString("status", getString(R.string.deny_send_message));
+			msg.setData(data);
+			handler.sendMessage(msg);
+			return;
+		}
+
 		// _smsLogger.logStart(operator, cid+"", lac+"", new Date());
 		sendHeaderSMS(_toPhoneNumber, _useDataPort);
+		count++;
+
+		msg = new Message();
+		data = new Bundle();
+		data.putString("status", getString(R.string.sending_header));
+		data.putInt("count", count);
+		msg.setData(data);
+		handler.sendMessage(msg);
 
 		do {
 
 			Iterator<String> itMsgs = listMsgs.iterator();
 
-			int count = 0;
 			while (keepRunning && itMsgs.hasNext()) {
 				String nextMsg = itMsgs.next();
 
 				sendSMS(_toPhoneNumber, nextMsg, _useDataPort, _addTrackingMetadata);
-
-				Message msg = new Message();
-				Bundle data = new Bundle();
-				data.putString("status", "sending message: \"" + nextMsg + "\"");
 				count++;
+
+				msg = new Message();
+				data = new Bundle();
+				data.putString("status", getString(R.string.sending_message) + " \""
+						+ nextMsg + "\"");
 				data.putInt("count", count);
 				msg.setData(data);
 				handler.sendMessage(msg);
@@ -366,8 +395,8 @@ public class SMSSenderActivity extends Activity implements Runnable, SMSTesterCo
 			}
 		} while (_doLoop);
 
-		Message msg = new Message();
-		Bundle data = new Bundle();
+		msg = new Message();
+		data = new Bundle();
 		data.putInt("count", -1);
 		msg.setData(data);
 		handler.sendMessage(msg);

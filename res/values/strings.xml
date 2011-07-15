@@ -24,8 +24,12 @@
 	<string name="settings">Settings</string>
 	<string name="about">About</string>
 	<string name="about_message">SMSTester: %s\nLearn more at: http://safermobile.org</string>
-	<string name="starting_send_title">Starting send...</string>
-	<string name="starting_send_message">Starting to send the message blast</string>
+	<string name="sending_title">Sending:</string>	
+	<string name="request_send_message">Requesting permission to send test messages.</string>
+	<string name="allow_deny_message">The recipient accepted your request, starting to send test messages.</string>
+	<string name="deny_send_message">The recipient denied your request, canceling.</string>
+	<string name="sending_header">Sending the header message to describe data format.</string>
+	<string name="sending_message">sending message:</string>
 	<string name="refresh">Refresh</string>
 	<string name="rotate_log">Rotate Log</string>
 	<string name="error_sms_log">Error setting up SMS Log:</string>
